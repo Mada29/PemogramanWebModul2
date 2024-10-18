@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            position: relative;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            transition: border 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0077ff;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #0077ff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #005ecc;
+        }
+
+        .todo-list {
+            margin-top: 20px;
+        }
+
+        .todo-item {
+            background-color: #f0f0f5;
+            border: 1px solid #e0e6ed;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .todo-text {
+            flex-grow: 1;
+            margin-left: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 180px;
+            font-size: 14px;
+        }
+
+        .todo-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .todo-item button {
+            background-color: transparent;
+            border: none;
+            color: #0077ff;
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .todo-item button:hover {
+            color: #005ecc;
+        }
+
+        .todo-edit-input {
+            width: calc(100% - 40px);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5px;
+            display: none;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .notification {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="notification" class="notification">Task added successfully!</div>
+        <h2>To-Do List</h2>
+        <div class="input-container">
+            <input type="text" id="todo-input" placeholder="Tambah list kamu">
+            <button onclick="addTodo()">&#43;</button>
+        </div>
+
+        <div class="todo-list" id="todo-list"></div>
+    </div>
+
+    <script>
+        let todoList = [];
+
+        function addTodo() {
+            const todoInput = document.getElementById('todo-input');
+            const todoText = todoInput.value.trim();
+
+            if (todoText === "") {
+                alert("Tambah kan list dulu ya :).");
+                return;
+            }
+
+            todoList.push(todoText);
+            todoInput.value = '';
+            renderTodos();
+            showNotification('Yey Berhasil ^ ^!');
+        }
+
+        function renderTodos() {
+            const todoListElement = document.getElementById('todo-list');
+            todoListElement.innerHTML = '';
+
+            todoList.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+
+                const todoTextElem = document.createElement('span');
+                todoTextElem.innerText = todo;
+                todoTextElem.className = 'todo-text';
+
+                const todoEditInput = document.createElement('input');
+                todoEditInput.type = 'text';
+                todoEditInput.value = todo;
+                todoEditInput.className = 'todo-edit-input';
+
+                const todoButtons = document.createElement('div');
+                todoButtons.className = 'todo-buttons';
+
+                const editButton = document.createElement('button');
+                editButton.innerHTML = '&#9998;';
+                editButton.onclick = () => {
+                    if (todoEditInput.style.display === 'none' || todoEditInput.style.display === '') {
+                        todoEditInput.style.display = 'inline-block';
+                        todoTextElem.style.display = 'none';
+                        editButton.innerHTML = '&#10003;';
+                    } else {
+                        const newTodoText = todoEditInput.value.trim();
+                        if (newTodoText !== "") {
+                            todoList[index] = newTodoText;
+                            todoTextElem.innerText = newTodoText;
+                        }
+                        todoEditInput.style.display = 'none';
+                        todoTextElem.style.display = 'inline';
+                        editButton.innerHTML = '&#9998;';
+                    }
+                };
+
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '&#128465;';
+                deleteButton.onclick = () => {
+                    deleteTodo(index);
+                    showNotification('List ini udah di hapus nih');
+                };
+
+                todoButtons.appendChild(editButton);
+                todoButtons.appendChild(deleteButton);
+
+                todoItem.appendChild(todoTextElem);
+                todoItem.appendChild(todoEditInput);
+                todoItem.appendChild(todoButtons);
+
+                todoListElement.appendChild(todoItem);
+            });
+        }
+
+        function deleteTodo(index) {
+            todoList.splice(index, 1);
+            renderTodos();
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.innerText = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>

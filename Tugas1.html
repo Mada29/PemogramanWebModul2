@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f7fa;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+.l
+        .calculator {
+            width: 350px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .display {
+            background-color: #f0f0f5;
+            color: #333;
+            font-size: 2rem;
+            text-align: right;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 50px;
+            overflow-x: auto;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .button {
+            background-color: #e0e6ed;
+            color: #333;
+            border: none;
+            font-size: 1.5rem;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .button.special {
+            background-color: #c7d2e2;
+        }
+
+        .button.operator {
+            background-color: #a5b8d8;
+        }
+
+        .button.equals {
+            grid-column: span 2;
+            background-color: #4a90e2;
+            color: #fff;
+        }
+
+        .button:hover {
+            background-color: #d0d7e2;
+        }
+
+        .button.special:hover {
+            background-color: #b0c0d5;
+        }
+
+        .button.operator:hover {
+            background-color: #93aac8;
+        }
+
+        .button.equals:hover {
+            background-color: #3a78c5;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div id="display" class="display">0</div>
+        <div class="buttons">
+            <button class="button special" onclick="clearDisplay()">C</button>
+            <button class="button special" onclick="addToDisplay('%')">%</button>
+            <button class="button special" onclick="addToDisplay('**')">^</button>
+            <button class="button operator" onclick="addToDisplay('/')">÷</button>
+
+            <button class="button" onclick="addToDisplay('7')">7</button>
+            <button class="button" onclick="addToDisplay('8')">8</button>
+            <button class="button" onclick="addToDisplay('9')">9</button>
+            <button class="button operator" onclick="addToDisplay('*')">×</button>
+
+            <button class="button" onclick="addToDisplay('4')">4</button>
+            <button class="button" onclick="addToDisplay('5')">5</button>
+            <button class="button" onclick="addToDisplay('6')">6</button>
+            <button class="button operator" onclick="addToDisplay('-')">−</button>
+
+            <button class="button" onclick="addToDisplay('1')">1</button>
+            <button class="button" onclick="addToDisplay('2')">2</button>
+            <button class="button" onclick="addToDisplay('3')">3</button>
+            <button class="button operator" onclick="addToDisplay('+')">+</button>
+
+            <button class="button" onclick="addToDisplay('0')">0</button>
+            <button class="button" onclick="addToDisplay('.')">.</button>
+            <button class="button equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let displayValue = ''; // Nilai yang tampil di display
+        let operatorSet = false; // Cek apakah operator sudah ditekan
+
+        function clearDisplay() {
+            displayValue = '';
+            updateDisplay('0');
+            operatorSet = false;
+        }
+
+        function updateDisplay(value) {
+            document.getElementById('display').innerText = value;
+        }
+
+        function addToDisplay(value) {
+            // Jika sudah ada operator, mulai nilai baru
+            if (operatorSet && isNaN(value)) {
+                return;  // Mencegah input operator beruntun
+            }
+
+            displayValue += value;
+            updateDisplay(displayValue);
+            operatorSet = isNaN(value);  // Set operator status jika yang ditambahkan adalah operator
+        }
+
+        function calculate() {
+            try {
+                // Menghitung hasil dari ekspresi yang ada pada display
+                let result = eval(displayValue.replace('%', ' % ')); // Menggunakan % sebagai modulus
+                updateDisplay(result);  // Langsung menampilkan hasil akhir saja
+                displayValue = result.toString();  // Set result sebagai display baru untuk kalkulasi berikutnya
+                operatorSet = false;  // Reset operator setelah kalkulasi
+            } catch (error) {
+                alert("Error: Invalid expression");
+                clearDisplay();
+            }
+        }
+    </script>
+</body>
+</html>
